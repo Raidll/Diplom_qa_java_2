@@ -1,13 +1,19 @@
-package user;
+package orders;
 
 import baseURL.BaseURL;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import random.RandomString;
+import user.Ingredient;
+import user.User;
+import user.UserAllMethods;
+import user.*;
+
 import static org.apache.http.HttpStatus.*;
 
 
@@ -16,7 +22,9 @@ import java.util.List;
 
 public class ApiCreateOrdersTest {
     private UserAllMethods userAllMethods = new UserAllMethods();
+    private OrdersAllMethods ordersAllMethods = new OrdersAllMethods();
     private User user;
+    private String accessToken;
 
     @Before
     public  void setUp() {
@@ -40,9 +48,9 @@ public class ApiCreateOrdersTest {
 
         Response createUserResponse = userAllMethods.createUser(user);
         String fullAccessToken = createUserResponse.path("accessToken");
-        String accessToken = fullAccessToken.substring(7);
+        accessToken = fullAccessToken.substring(7);
 
-        Response createOrderResponse = userAllMethods.createOrder(ingredients, accessToken);
+        Response createOrderResponse = ordersAllMethods.createOrder(ingredients, accessToken);
         createOrderResponse.then().statusCode(SC_OK);
         Assert.assertEquals(true, createOrderResponse.path("success"));
     }
@@ -58,10 +66,10 @@ public class ApiCreateOrdersTest {
         ingredientsList.add("61c0c5a71d1f82001bdaaa6c");
         Ingredient ingredients = new Ingredient(ingredientsList);
 
-        Response createOrderResponse = userAllMethods.createOrder(ingredients, randomString);
+        Response createOrderResponse = ordersAllMethods.createOrder(ingredients, randomString);
         createOrderResponse.then().statusCode(SC_FORBIDDEN);
         Assert.assertEquals(false, createOrderResponse.path("success"));
-        Assert.assertEquals("invalid token", createOrderResponse.path("message"));
+        Assert.assertEquals("jwt malformed", createOrderResponse.path("message"));
     }
 
     @Test
@@ -75,9 +83,9 @@ public class ApiCreateOrdersTest {
 
         Response createUserResponse = userAllMethods.createUser(user);
         String fullAccessToken = createUserResponse.path("accessToken");
-        String accessToken = fullAccessToken.substring(7);
+        accessToken = fullAccessToken.substring(7);
 
-        Response createOrderResponse = userAllMethods.createOrder(ingredients, accessToken);
+        Response createOrderResponse = ordersAllMethods.createOrder(ingredients, accessToken);
         createOrderResponse.then().statusCode(SC_INTERNAL_SERVER_ERROR);
     }
 
@@ -90,9 +98,16 @@ public class ApiCreateOrdersTest {
 
         Response createUserResponse = userAllMethods.createUser(user);
         String fullAccessToken = createUserResponse.path("accessToken");
-        String accessToken = fullAccessToken.substring(7);
+        accessToken = fullAccessToken.substring(7);
 
-        Response createOrderResponse = userAllMethods.createOrder(ingredients, accessToken);
+        Response createOrderResponse = ordersAllMethods.createOrder(ingredients, accessToken);
         createOrderResponse.then().statusCode(SC_INTERNAL_SERVER_ERROR);
+    }
+
+    @After
+    public void deleteUser(){
+         if (accessToken != null) {
+             userAllMethods.deleteUser(this.accessToken);
+         }
     }
 }
