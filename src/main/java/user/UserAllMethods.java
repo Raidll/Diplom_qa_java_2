@@ -3,9 +3,7 @@ package user;
 import io.qameta.allure.Step;
 import io.restassured.response.Response;
 
-import java.util.List;
-
-import static io.restassured.RestAssured.given;
+import static baseURL.Specification.spec;
 
 public class UserAllMethods {
     private static final String CREATE_USER = "/api/auth/register";
@@ -15,7 +13,7 @@ public class UserAllMethods {
 
     @Step("Send POST request to /api/auth/register")
     public Response createUser(User user){
-        return given()
+        return spec()
                 .header("Content-type", "application/json")
                 .body(user)
                 .when()
@@ -23,51 +21,36 @@ public class UserAllMethods {
     }
 
     @Step("Send POST request to /api/auth/login")
-    public Response loginUser(User user){
-        String loginAndPasswordJson = "{\n" +
-                "\"email\": " + "\""+ user.getEmail() + "\"" +",\n" +
-                "\"password\": " + "\"" + user.getPassword() + "\"\n" +
-                "}";
-
-        return given()
+    public Response loginUser(UserEmailAndPasswordModel userEmailAndPasswordModel){
+        return spec()
                 .header("Content-type", "application/json")
-                .body(loginAndPasswordJson)
+                .body(userEmailAndPasswordModel)
                 .when()
                 .post(LOGIN_USER);
     }
 
     @Step("Send POST request to /api/auth/login")
-    public Response loginUserWithEmailAndPassword(String email, String password){
-        String loginAndPasswordJson = "{\n" +
-                "\"email\": " + "\""+ email + "\"" +",\n" +
-                "\"password\": " + "\"" + password + "\"\n" +
-                "}";
-
-        return given()
+    public Response loginUserWithEmailAndPassword(UserEmailAndPasswordModel userEmailAndPasswordModel){
+        return spec()
                 .header("Content-type", "application/json")
-                .body(loginAndPasswordJson)
+                .body(userEmailAndPasswordModel)
                 .when()
                 .post(LOGIN_USER);
     }
 
     @Step("Send POST request to /api/auth/user")
-    public Response changeUserData(String email, String name, String accessToken){
-        String emailAndPasswordJson = "{\n" +
-                "\"email\": " + "\""+ email + "\"" +",\n" +
-                "\"name\": " + "\"" + name + "\"\n" +
-                "}";
-
-        return given()
+    public Response changeUserData(UserEmailAndNameModel userEmailAndNameModel, String accessToken){
+        return spec()
                 .header("Content-type", "application/json")
                 .auth().oauth2(accessToken)
-                .body(emailAndPasswordJson)
+                .body(userEmailAndNameModel)
                 .when()
                 .patch(CHANGE_USER_DATA);
     }
 
     @Step("Send DELETE request to /api/auth/user")
     public Response deleteUser(String accessToken) {
-        return given()
+        return spec()
                 .header("Content-type", "application/json")
                 .auth().oauth2(accessToken)
                 .when()

@@ -4,6 +4,7 @@ import io.qameta.allure.Step;
 import io.restassured.response.Response;
 import user.Ingredient;
 
+import static baseURL.Specification.spec;
 import static io.restassured.RestAssured.given;
 
 public class OrdersAllMethods {
@@ -12,7 +13,7 @@ public class OrdersAllMethods {
 
     @Step("Send POST request to /api/orders")
     public Response createOrder(Ingredient ingredient, String accessToken){
-        return given()
+        return spec()
                 .header("Content-type", "application/json")
                 .auth().oauth2(accessToken)
                 .body(ingredient)
@@ -22,7 +23,7 @@ public class OrdersAllMethods {
 
     @Step("Send POST request to /api/orders/all")
     public Response getAllOrders(String accessToken){
-        return given()
+        return spec()
                 .contentType("application/json")
                 .auth().oauth2(accessToken)
                 .when()

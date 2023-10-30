@@ -1,8 +1,6 @@
 package orders;
 
-import baseURL.BaseURL;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Assert;
@@ -12,7 +10,6 @@ import random.RandomString;
 import user.Ingredient;
 import user.User;
 import user.UserAllMethods;
-import user.*;
 
 import static org.apache.http.HttpStatus.*;
 
@@ -20,7 +17,7 @@ import static org.apache.http.HttpStatus.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ApiCreateOrdersTest {
+public class ApiCreateOrdersTest  {
     private UserAllMethods userAllMethods = new UserAllMethods();
     private OrdersAllMethods ordersAllMethods = new OrdersAllMethods();
     private User user;
@@ -28,8 +25,6 @@ public class ApiCreateOrdersTest {
 
     @Before
     public  void setUp() {
-        RestAssured.baseURI = BaseURL.getBaseURL();
-
         String email = RandomString.generateRandomHexString(10) + "@mail.ru";
         String password = RandomString.generateRandomHexString(5);
         String name = RandomString.generateRandomHexString(5);

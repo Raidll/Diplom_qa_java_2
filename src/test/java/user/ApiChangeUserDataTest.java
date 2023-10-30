@@ -1,6 +1,5 @@
 package user;
 
-import baseURL.BaseURL;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -10,16 +9,15 @@ import org.junit.Before;
 import org.junit.Test;
 import random.RandomString;
 import static org.apache.http.HttpStatus.*;
+import baseURL.BaseURL;
 
 public class ApiChangeUserDataTest {
-    private UserAllMethods userAllMethods = new UserAllMethods();
+    private final UserAllMethods userAllMethods = new UserAllMethods();
     private User user;
     private String accessToken;
 
     @Before
     public  void setUp() {
-        RestAssured.baseURI = BaseURL.getBaseURL();
-
         String email = RandomString.generateRandomHexString(10) + "@mail.ru";
         String password = RandomString.generateRandomHexString(5);
         String name = RandomString.generateRandomHexString(5);
@@ -35,7 +33,7 @@ public class ApiChangeUserDataTest {
         Response createUserResponse = userAllMethods.createUser(user);
         String fullAccessToken = createUserResponse.path("accessToken");
         accessToken = fullAccessToken.substring(7);
-        Response changeUserEmailResponse = userAllMethods.changeUserData(newEmail, user.getName(), accessToken);
+        Response changeUserEmailResponse = userAllMethods.changeUserData(new UserEmailAndNameModel(newEmail, user.getName()), accessToken);
         changeUserEmailResponse.then().statusCode(SC_OK);
         Assert.assertEquals(true, changeUserEmailResponse.path("success"));
         Assert.assertEquals(newEmail, changeUserEmailResponse.path("user.email"));
@@ -50,7 +48,7 @@ public class ApiChangeUserDataTest {
         Response createUserResponse = userAllMethods.createUser(user);
         String fullAccessToken = createUserResponse.path("accessToken");
         accessToken = fullAccessToken.substring(7);
-        Response changeUserEmailResponse = userAllMethods.changeUserData(user.getEmail(), newName, accessToken);
+        Response changeUserEmailResponse = userAllMethods.changeUserData(new UserEmailAndNameModel(user.getEmail(), newName), accessToken);
         changeUserEmailResponse.then().statusCode(SC_OK);
         Assert.assertEquals(true, changeUserEmailResponse.path("success"));
         Assert.assertEquals(user.getEmail(), changeUserEmailResponse.path("user.email"));
@@ -63,7 +61,7 @@ public class ApiChangeUserDataTest {
         String newName = RandomString.generateRandomHexString(5);
 
         userAllMethods.createUser(user);
-        Response changeUserEmailResponse = userAllMethods.changeUserData(user.getEmail(), newName, "");
+        Response changeUserEmailResponse = userAllMethods.changeUserData(new UserEmailAndNameModel(user.getEmail(), newName), "");
         changeUserEmailResponse.then().statusCode(SC_UNAUTHORIZED);
         Assert.assertEquals(false, changeUserEmailResponse.path("success"));
         Assert.assertEquals("You should be authorised", changeUserEmailResponse.path("message"));
@@ -75,7 +73,7 @@ public class ApiChangeUserDataTest {
         String newEmail = RandomString.generateRandomHexString(5);
 
         userAllMethods.createUser(user);
-        Response changeUserEmailResponse = userAllMethods.changeUserData(newEmail, user.getName(), "");
+        Response changeUserEmailResponse = userAllMethods.changeUserData(new UserEmailAndNameModel(newEmail, user.getName()), "");
         changeUserEmailResponse.then().statusCode(SC_UNAUTHORIZED);
         Assert.assertEquals(false, changeUserEmailResponse.path("success"));
         Assert.assertEquals("You should be authorised", changeUserEmailResponse.path("message"));

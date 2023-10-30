@@ -1,11 +1,8 @@
 package user;
 
-import baseURL.BaseURL;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -32,11 +29,6 @@ public class ApiLoginUserParametrizeTest {
 
     }
 
-    @Before
-    public  void setUp() {
-        RestAssured.baseURI = BaseURL.getBaseURL();
-    }
-
 
     @Parameterized.Parameters
     public static Collection<Object[]> testBadData() {
@@ -59,7 +51,7 @@ public class ApiLoginUserParametrizeTest {
     @DisplayName("Check status code when request with bad parameters")
     public void loginUserWithBadParameters(){
         userAllMethods.createUser(user);
-        Response loginUserWithBadParameterResponse = userAllMethods.loginUserWithEmailAndPassword(email, password);
+        Response loginUserWithBadParameterResponse = userAllMethods.loginUserWithEmailAndPassword(new UserEmailAndPasswordModel(email, password));
         loginUserWithBadParameterResponse
                 .then()
                 .statusCode(SC_UNAUTHORIZED);

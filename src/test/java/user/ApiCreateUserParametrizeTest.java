@@ -1,6 +1,5 @@
 package user;
 
-import baseURL.BaseURL;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -29,10 +28,6 @@ public class ApiCreateUserParametrizeTest {
         this.name = name;
     }
 
-    @Before
-    public  void setUp() {
-        RestAssured.baseURI = BaseURL.getBaseURL();
-    }
 
     @Parameterized.Parameters
     public static Collection<Object[]> testBadData() {

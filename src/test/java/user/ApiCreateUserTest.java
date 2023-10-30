@@ -1,12 +1,10 @@
 package user;
 
-import baseURL.BaseURL;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.junit.After;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import random.RandomString;
 import static org.apache.http.HttpStatus.*;
@@ -15,10 +13,6 @@ public class ApiCreateUserTest {
     private UserAllMethods userAllMethods = new UserAllMethods();
     private String accessToken;
 
-    @Before
-    public  void setUp() {
-        RestAssured.baseURI = BaseURL.getBaseURL();
-    }
 
     @Test
     @DisplayName("Check response /api/auth/register")
@@ -35,7 +29,7 @@ public class ApiCreateUserTest {
                 then().
                 assertThat().
                 statusCode(SC_OK);
-        Assert.assertEquals(true, createUserResponse.path("success"));
+        Assert.assertTrue( createUserResponse.path("success"));
         Assert.assertEquals(email, createUserResponse.path("user.email"));
         Assert.assertEquals(name, createUserResponse.path("user.name"));
     }
